@@ -4,7 +4,6 @@ import { Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import EmployeeListPage from "./pages/EmployeeListPage";
 import ScanQRPage from "./pages/ScanQRPage";
-import TestQR from "./pages/TestQR";
 import './pages/Home.css';
 
 const Navbar = () => (
@@ -33,7 +32,6 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/employeelist" element={<EmployeeListPage />} />
         <Route path="/scan" element={<ScanQRPage />} />
-        <Route path="/testqr" element={<TestQR />} />
       </Routes>
     </div>
   );
