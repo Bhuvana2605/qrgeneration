@@ -23,6 +23,8 @@ A full-stack web application to securely generate and scan QR codes for employee
 
 ---
 
+## make sure to import sql file into your local system for the database
+
 ## Run the App
 
 **Backend:**
