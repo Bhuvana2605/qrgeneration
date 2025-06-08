@@ -7,26 +7,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
-
 import java.util.Map;
-
 
 @RestController
 @RequestMapping("/api/qr")
 public class QRController {
 
     @Autowired
-    private QRService employeeService;
+    private QRService qrService;
 
-    private static final String VALID_PASSWORD = "root123"; // Change this!
+    private static final String VALID_PASSWORD = "root123"; // Change this to your password
 
-    // Endpoint to generate encrypted QR string
+    // Generate encrypted QR string with employee ID encrypted
     @GetMapping("/generate/{employeeId}")
-
     public ResponseEntity<String> generateEncryptedQR(@PathVariable Long employeeId) {
         try {
-            String encrypted = employeeService.generateEncryptedQR(employeeId);
-
+            String encrypted = qrService.generateEncryptedQR(employeeId);
             return ResponseEntity.ok(encrypted);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -34,12 +30,9 @@ public class QRController {
         }
     }
 
-
-
-    // Endpoint to decrypt and verify with password
+    // Decrypt QR string, verify password, return employee details
     @PostMapping("/decrypt")
     public ResponseEntity<?> decryptData(@RequestBody Map<String, String> request) {
-        System.out.println("Request received: " + request);
         String encryptedData = request.get("encryptedData");
         String password = request.get("password");
 
@@ -48,11 +41,10 @@ public class QRController {
         }
 
         try {
-            Employee employee = employeeService.decryptEncryptedQR(encryptedData);
+            Employee employee = qrService.decryptEncryptedQR(encryptedData);
             return ResponseEntity.ok(employee);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Decryption failed"));
+            return ResponseEntity.badRequest().body(Map.of("error", "Decryption failed: " + e.getMessage()));
         }
     }
 }
-

@@ -12,7 +12,6 @@ function ScanQRPage() {
     const qrRegionId = "qr-reader";
     let isMounted = true;
 
-    // Wait for the DOM to render the qr-reader div
     setTimeout(() => {
       if (!isMounted) return;
       const qrReaderElem = document.getElementById(qrRegionId);
@@ -24,28 +23,21 @@ function ScanQRPage() {
           html5QrCodeRef.current
             .start(
               { facingMode: "environment" },
-              {
-                fps: 10,
-                qrbox: 250,
-              },
+              { fps: 10, qrbox: 250 },
               (decodedText) => {
-                console.log("Scanned QR:", decodedText);
                 setQrData(decodedText);
               },
               (err) => {
-                // Ignore scan errors
+                // ignore scan errors
               }
             )
-            .catch((err) => {
-              setError("Camera error: " + err);
-            });
+            .catch((err) => setError("Camera error: " + err));
         } else {
           setError("No camera found");
         }
       });
-    }, 100); // Delay to ensure DOM is ready
+    }, 100);
 
-    // Cleanup on unmount
     return () => {
       isMounted = false;
       if (html5QrCodeRef.current) {
@@ -53,25 +45,23 @@ function ScanQRPage() {
           .stop()
           .catch(() => {})
           .finally(() => {
-            html5QrCodeRef.current
-              .clear()
-              .catch(() => {});
+            html5QrCodeRef.current.clear().catch(() => {});
           });
       }
     };
   }, []);
 
-  const handleDecrypt = (encryptedData, pwd) => {
+  const handleDecrypt = () => {
+    if (!qrData || !password) {
+      setError("Both encrypted data and password are required");
+      return;
+    }
+
     setError("");
     fetch("http://localhost:8080/api/qr/decrypt", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        encryptedData: encryptedData,
-        password: pwd,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ encryptedData: qrData, password }),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Decryption failed");
@@ -79,6 +69,7 @@ function ScanQRPage() {
       })
       .then((data) => {
         setEmployee(data);
+        setError("");
       })
       .catch(() => {
         setEmployee(null);
@@ -88,8 +79,19 @@ function ScanQRPage() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Scan and Decrypt QR Code</h2>
+      <h2>Scan or Paste Encrypted QR Code</h2>
       <div id="qr-reader" style={{ width: 350, margin: "0 auto" }}></div>
+
+      <div style={{ marginTop: "20px" }}>
+        <label><strong>Or paste encrypted string manually:</strong></label>
+        <textarea
+          rows={4}
+          style={{ width: "100%", marginTop: "5px" }}
+          placeholder="Paste encrypted QR data here..."
+          value={qrData}
+          onChange={(e) => setQrData(e.target.value)}
+        />
+      </div>
 
       <div style={{ marginTop: "10px" }}>
         <input
@@ -97,20 +99,10 @@ function ScanQRPage() {
           placeholder="Enter password to decrypt"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
         />
+        <button onClick={handleDecrypt}>Decrypt</button>
       </div>
-
-      {qrData && !employee && (
-        <div>
-          <p>QR Data: {qrData}</p>
-          <button
-            onClick={() => handleDecrypt(qrData, password)}
-            style={{ marginTop: "10px" }}
-          >
-            Decrypt
-          </button>
-        </div>
-      )}
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -132,5 +124,5 @@ function ScanQRPage() {
 }
 
 export default ScanQRPage;
-// This component allows the user to scan a QR code using their camera and automatically decrypts it to display employee details.
-// It fetches the employee details from the backend and displays them if the decryption is successful.
+// This component allows users to scan a QR code or paste an encrypted string,
+// enter a password to decrypt it, and view employee details.
