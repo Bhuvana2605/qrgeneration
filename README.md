@@ -49,7 +49,6 @@ A secure employee identification system that generates and validates encrypted Q
 
 # System Architecture
 
-> Replace the image below with your architecture diagram.
 
 ![Architecture](images/architecture.png)
 
@@ -57,7 +56,6 @@ A secure employee identification system that generates and validates encrypted Q
 
 # Data Flow
 
-> Replace the image below with your data flow diagram.
 
 ![Data Flow](images/dataflow.png)
 
@@ -123,41 +121,26 @@ encrypted-qr-system/
 
 ## Home Page
 
-> Add screenshot
 
-![Home](screenshots/home.png)
+![Home](screenshots/Home.png)
 
 ---
 
 ## Employee List
 
-> Add screenshot
-
-![Employee List](screenshots/employee-list.png)
-
----
-
-## Generated QR Code
-
-> Add screenshot
-
-![QR Generation](screenshots/qr-generation.png)
+![Employee List](screenshots/Employeelist.png)
 
 ---
 
 ## QR Scanner
 
-> Add screenshot
-
-![Scanner](screenshots/scanner.png)
+![Scanner](screenshots/Scanner.png)
 
 ---
 
 ## Employee Details After Decryption
 
-> Add screenshot
-
-![Employee Details](screenshots/employee-details.png)
+![Employee Details](screenshots/result.png)
 
 ---
 
